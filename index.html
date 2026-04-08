@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sell vs Rent — 10-Year Calculator</title>
+<title>Renting vs Selling & Investing — 10-Year Calculator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -26,6 +26,7 @@
     --keep-bg: #edf6ee;
     --keep-border: #2d7d3a;
     --warn: #c0392b;
+    --pos: #2d7d3a;
     --mono: 'DM Mono', monospace;
     --sans: 'DM Sans', sans-serif;
     --radius: 8px;
@@ -49,30 +50,23 @@
       --keep-bg: rgba(90,184,104,0.08);
       --keep-border: #5ab868;
       --warn: #e05c4b;
+      --pos: #5ab868;
     }
   }
 
   html { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
-
   body { min-height: 100vh; }
 
   header {
     border-bottom: 1px solid var(--border);
     padding: 20px 32px;
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
+    display: flex; align-items: baseline; gap: 16px;
     background: var(--surface);
   }
-
   header h1 { font-size: 17px; font-weight: 500; letter-spacing: -0.02em; }
   header span { font-size: 13px; color: var(--text-3); font-family: var(--mono); }
 
-  .layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    min-height: calc(100vh - 61px);
-  }
+  .layout { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 61px); }
 
   .sidebar {
     background: var(--surface);
@@ -80,204 +74,127 @@
     padding: 24px;
     overflow-y: auto;
     max-height: calc(100vh - 61px);
-    position: sticky;
-    top: 0;
+    position: sticky; top: 0;
   }
 
-  .main {
-    padding: 28px 32px;
-    overflow-y: auto;
-  }
+  .main { padding: 28px 32px; overflow-y: auto; }
 
   .section { margin-bottom: 24px; }
   .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-3);
+    margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
   }
 
   .field { margin-bottom: 14px; }
   .field-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
   .field-label { font-size: 13px; color: var(--text-2); }
   .field-value {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1px 7px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 7px;
   }
 
   input[type=range] {
-    width: 100%;
-    height: 3px;
-    -webkit-appearance: none;
-    appearance: none;
-    background: var(--border-strong);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
+    width: 100%; height: 3px; -webkit-appearance: none; appearance: none;
+    background: var(--border-strong); border-radius: 2px; outline: none; cursor: pointer;
   }
   input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--text);
-    cursor: pointer;
-    transition: transform 0.1s;
+    -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--text); cursor: pointer; transition: transform 0.1s;
   }
   input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   input[type=range]::-moz-range-thumb {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--text);
-    border: none;
-    cursor: pointer;
+    width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: none; cursor: pointer;
   }
-
   .range-bounds { display: flex; justify-content: space-between; margin-top: 2px; }
   .range-bounds span { font-size: 10px; color: var(--text-3); font-family: var(--mono); }
 
-  .metrics {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .metric {
-    background: var(--surface);
+  .cf-banner {
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
+    background: var(--surface);
+    padding: 0;
+    margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    overflow: hidden;
   }
+  .cf-item { padding: 16px 18px; }
+  .cf-item + .cf-item { border-left: 1px solid var(--border); }
+  .cf-label { font-size: 11px; color: var(--text-3); font-family: var(--mono); margin-bottom: 4px; }
+  .cf-val { font-size: 26px; font-weight: 300; letter-spacing: -0.04em; font-family: var(--mono); color: var(--text); }
+  .cf-val.pos { color: var(--pos); }
+  .cf-val.neg { color: var(--warn); }
+  .cf-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+  .cf-pill {
+    display: inline-block; font-size: 12px; font-weight: 500;
+    font-family: var(--mono); border-radius: 20px; padding: 4px 12px; margin-bottom: 14px;
+  }
+  .cf-pill.pos { background: rgba(45,125,58,0.1); color: var(--pos); }
+  .cf-pill.neg { background: rgba(192,57,43,0.1); color: var(--warn); }
+
+  .metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
   .metric-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; font-family: var(--mono); }
   .metric-value { font-size: 20px; font-weight: 500; color: var(--text); font-family: var(--mono); letter-spacing: -0.03em; }
   .metric-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-  .metric-value.warn { color: var(--warn); }
 
   .alert {
-    background: #fef8e7;
-    border: 1px solid #e8d06a;
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #7a6010;
-    margin-bottom: 16px;
+    background: #fef8e7; border: 1px solid #e8d06a; border-radius: var(--radius);
+    padding: 10px 14px; font-size: 12px; color: #7a6010; margin-bottom: 14px;
   }
   @media (prefers-color-scheme: dark) {
     .alert { background: rgba(232,208,106,0.08); border-color: rgba(232,208,106,0.3); color: #c8a830; }
   }
 
-  .chart-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px 24px;
-    margin-bottom: 20px;
-  }
-
+  .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 14px; }
   .chart-legend { display: flex; gap: 20px; margin-bottom: 16px; }
   .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-2); }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .chart-container { position: relative; width: 100%; height: 260px; }
 
-  .chart-container { position: relative; width: 100%; height: 280px; }
-
-  .results {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
+  .results { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px 22px;
-    transition: border-color 0.2s;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px 22px; transition: border-color 0.2s;
   }
   .result-card.winner-sell { border: 2px solid var(--sell-border); background: var(--sell-bg); }
   .result-card.winner-keep { border: 2px solid var(--keep-border); background: var(--keep-bg); }
-
   .result-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
-  .badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: 4px;
-    padding: 2px 9px;
-    margin-bottom: 6px;
-    font-family: var(--mono);
-  }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; border-radius: 4px; padding: 2px 9px; margin-bottom: 6px; font-family: var(--mono); }
   .badge-sell { background: rgba(26,79,214,0.12); color: var(--sell); }
   .badge-keep { background: rgba(45,125,58,0.12); color: var(--keep); }
-
   .result-total { font-size: 28px; font-weight: 300; color: var(--text); letter-spacing: -0.04em; font-family: var(--mono); }
   .result-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; }
-
-  .keep-breakdown {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 3px 16px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-  }
+  .keep-breakdown { display: grid; grid-template-columns: 1fr auto; gap: 3px 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
   .kb-label { font-size: 12px; color: var(--text-3); }
   .kb-value { font-size: 12px; font-weight: 500; color: var(--text-2); font-family: var(--mono); text-align: right; }
-  .kb-value.warn { color: var(--warn); }
+  .kb-value.neg { color: var(--warn); }
+  .kb-value.pos { color: var(--pos); }
 
-  .caveats {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 18px 22px;
-  }
+  .caveats { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 22px; }
   .caveats-title { font-size: 12px; font-weight: 500; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; font-family: var(--mono); }
   .caveats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
   .caveat-row { display: flex; gap: 8px; align-items: flex-start; }
-  .caveat-tag {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1px 7px;
-    font-size: 11px;
-    color: var(--text-3);
-    white-space: nowrap;
-    flex-shrink: 0;
-    font-family: var(--mono);
-  }
+  .caveat-tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; font-size: 11px; color: var(--text-3); white-space: nowrap; flex-shrink: 0; font-family: var(--mono); }
   .caveat-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
 
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 11px;
-    color: var(--text-3);
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
-    font-family: var(--mono);
-  }
+  footer { text-align: center; padding: 20px; font-size: 11px; color: var(--text-3); border-top: 1px solid var(--border); margin-top: 16px; font-family: var(--mono); line-height: 1.8; }
 
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { max-height: none; position: static; }
-    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .metrics { grid-template-columns: repeat(3,1fr); }
     .results { grid-template-columns: 1fr; }
     .caveats-grid { grid-template-columns: 1fr; }
     .main { padding: 20px; }
     header { padding: 16px 20px; }
     .sidebar { padding: 20px; }
+    .cf-banner { grid-template-columns: 1fr; }
+    .cf-item + .cf-item { border-left: none; border-top: 1px solid var(--border); }
   }
-
   @media (max-width: 500px) {
     .metrics { grid-template-columns: 1fr 1fr; }
     .chart-container { height: 200px; }
@@ -287,7 +204,7 @@
 <body>
 
 <header>
-  <h1>Sell vs Rent</h1>
+  <h1>Renting vs Selling &amp; Investing</h1>
   <span>10-year net wealth comparison · UK (Section 24)</span>
 </header>
 
@@ -322,6 +239,11 @@
         <div class="range-bounds"><span>£500</span><span>£3,000</span></div>
       </div>
       <div class="field">
+        <div class="field-header"><span class="field-label">Void period (months / year)</span><span class="field-value" id="v-void">1 month</span></div>
+        <input type="range" min="0" max="4" step="0.5" value="1" id="s-void">
+        <div class="range-bounds"><span>None</span><span>4 months</span></div>
+      </div>
+      <div class="field">
         <div class="field-header"><span class="field-label">Selling costs (agent + legal)</span><span class="field-value" id="v-scost">2.0%</span></div>
         <input type="range" min="0.5" max="4" step="0.1" value="2" id="s-scost">
         <div class="range-bounds"><span>0.5%</span><span>4%</span></div>
@@ -331,7 +253,7 @@
     <div class="section">
       <div class="section-label">Rental costs &amp; tax</div>
       <div class="field">
-        <div class="field-header"><span class="field-label">Letting agent fees</span><span class="field-value" id="v-agent">10%</span></div>
+        <div class="field-header"><span class="field-label">Letting agent fees (% of rent)</span><span class="field-value" id="v-agent">10%</span></div>
         <input type="range" min="5" max="20" step="1" value="10" id="s-agent">
         <div class="range-bounds"><span>5%</span><span>20%</span></div>
       </div>
@@ -375,16 +297,31 @@
 
   <main class="main">
 
+    <div class="cf-banner">
+      <div class="cf-item">
+        <div class="cf-label">Rent received / mo (yr 1)</div>
+        <div class="cf-val" id="cf-rent">—</div>
+        <div class="cf-sub" id="cf-rent-sub">after void adjustment</div>
+      </div>
+      <div class="cf-item">
+        <div class="cf-label">Total outgoings / mo (yr 1)</div>
+        <div class="cf-val" id="cf-out">—</div>
+        <div class="cf-sub">mortgage + fees + repairs + tax</div>
+      </div>
+      <div class="cf-item">
+        <div class="cf-label">Net cashflow / mo (yr 1)</div>
+        <div class="cf-val" id="cf-net">—</div>
+        <div class="cf-sub" id="cf-net-sub">—</div>
+      </div>
+    </div>
+
+    <div id="cf-pill"></div>
+
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Mortgage / month</div>
         <div class="metric-value" id="m-mortgage">—</div>
-        <div class="metric-sub">repayment</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Net rental / month yr 1</div>
-        <div class="metric-value" id="m-netcash">—</div>
-        <div class="metric-sub">after all costs &amp; tax</div>
+        <div class="metric-sub">repayment (P+I)</div>
       </div>
       <div class="metric">
         <div class="metric-label">Net sale proceeds</div>
@@ -403,7 +340,7 @@
     <div class="chart-wrap">
       <div class="chart-legend">
         <span class="legend-item"><span class="legend-dot" style="background:var(--sell)"></span>Sell now &amp; invest proceeds</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--keep)"></span>Keep &amp; rent (equity + cash surplus)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--keep)"></span>Keep &amp; rent (equity + cumulative cashflow)</span>
       </div>
       <div class="chart-container"><canvas id="mainChart"></canvas></div>
     </div>
@@ -424,7 +361,7 @@
           <span class="kb-label">Property value at yr 10</span><span class="kb-value" id="kd-propval">—</span>
           <span class="kb-label">Remaining mortgage</span><span class="kb-value" id="kd-mortbal">—</span>
           <span class="kb-label">Equity</span><span class="kb-value" id="kd-equity">—</span>
-          <span class="kb-label">Cumulative net cash</span><span class="kb-value" id="kd-cash">—</span>
+          <span class="kb-label">Cumulative cashflow (10 yrs)</span><span class="kb-value" id="kd-cash">—</span>
         </div>
       </div>
     </div>
@@ -432,16 +369,19 @@
     <div class="caveats">
       <div class="caveats-title">Factors not in the model</div>
       <div class="caveats-grid">
-        <div class="caveat-row"><span class="caveat-tag">Hassle</span><span class="caveat-text">Tenants, voids, disputes — landlording is a second job</span></div>
-        <div class="caveat-row"><span class="caveat-tag">Void risk</span><span class="caveat-text">1 month empty per year costs ~8% of gross rent</span></div>
+        <div class="caveat-row"><span class="caveat-tag">Hassle</span><span class="caveat-text">Tenants, disputes, maintenance calls — landlording is a second job</span></div>
+        <div class="caveat-row"><span class="caveat-tag">Remortgage</span><span class="caveat-text">Rate may rise significantly at next fix — adjust the rate slider</span></div>
         <div class="caveat-row"><span class="caveat-tag">Leverage</span><span class="caveat-text">Mortgage amplifies both gains and losses on price moves</span></div>
         <div class="caveat-row"><span class="caveat-tag">Liquidity</span><span class="caveat-text">Selling takes 3–6 months; stocks accessible in days</span></div>
         <div class="caveat-row"><span class="caveat-tag">CGT</span><span class="caveat-text">Selling later may trigger Capital Gains Tax on appreciation</span></div>
-        <div class="caveat-row"><span class="caveat-tag">Rate risk</span><span class="caveat-text">At remortgage your payment could increase substantially</span></div>
+        <div class="caveat-row"><span class="caveat-tag">Consent</span><span class="caveat-text">Most residential mortgages require lender permission to let</span></div>
       </div>
     </div>
 
-    <footer>For illustrative purposes only — not financial advice. Always consult a qualified adviser before making property decisions.</footer>
+    <footer>
+      For illustrative purposes only — not financial advice. Consult a qualified adviser before making property decisions.<br>
+      Cashflow surpluses assumed reinvested at market rate. Deficits assumed funded from other income (reducing overall wealth accordingly).
+    </footer>
 
   </main>
 </div>
@@ -453,52 +393,66 @@ const g = id => document.getElementById(id);
 let chart;
 
 function calc() {
-  const sale = +g('s-sale').value;
-  const mb0 = +g('s-mort').value;
-  const mr = +g('s-mrate').value / 100;
-  const my = +g('s-myrs').value;
-  const rent = +g('s-rent').value;
-  const sc = +g('s-scost').value / 100;
-  const af = +g('s-agent').value / 100;
-  const rep = +g('s-repairs').value;
-  const up = +g('s-upfront').value;
-  const tr = +g('s-tax').value / 100;
-  const hpg = +g('s-hpg').value / 100;
-  const inv = +g('s-inv').value / 100;
-  const ri = +g('s-rinc').value / 100;
+  const sale   = +g('s-sale').value;
+  const mb0    = +g('s-mort').value;
+  const mr     = +g('s-mrate').value / 100;
+  const my     = +g('s-myrs').value;
+  const rent   = +g('s-rent').value;
+  const voidMo = +g('s-void').value;
+  const sc     = +g('s-scost').value / 100;
+  const af     = +g('s-agent').value / 100;
+  const rep    = +g('s-repairs').value;
+  const up     = +g('s-upfront').value;
+  const tr     = +g('s-tax').value / 100;
+  const hpg    = +g('s-hpg').value / 100;
+  const inv    = +g('s-inv').value / 100;
+  const ri     = +g('s-rinc').value / 100;
 
-  const fmt = (id, v, suffix = '') => g(id).textContent = v + suffix;
-  fmt('v-sale', '£' + sale.toLocaleString('en-GB'));
-  fmt('v-mort', '£' + mb0.toLocaleString('en-GB'));
-  fmt('v-mrate', g('s-mrate').value + '%');
-  fmt('v-myrs', my + ' yrs');
-  fmt('v-rent', '£' + rent.toLocaleString('en-GB'));
-  fmt('v-scost', (+g('s-scost').value).toFixed(1) + '%');
-  fmt('v-agent', g('s-agent').value + '%');
-  fmt('v-repairs', '£' + rep.toLocaleString('en-GB'));
-  fmt('v-upfront', '£' + up.toLocaleString('en-GB'));
-  fmt('v-tax', g('s-tax').value + '%');
-  fmt('v-hpg', (+g('s-hpg').value).toFixed(1) + '%');
-  fmt('v-inv', (+g('s-inv').value).toFixed(1) + '%');
-  fmt('v-rinc', (+g('s-rinc').value).toFixed(1) + '%');
+  // Update sidebar labels
+  g('v-sale').textContent    = '£' + sale.toLocaleString('en-GB');
+  g('v-mort').textContent    = '£' + mb0.toLocaleString('en-GB');
+  g('v-mrate').textContent   = (+g('s-mrate').value).toFixed(1) + '%';
+  g('v-myrs').textContent    = my + ' yrs';
+  g('v-rent').textContent    = '£' + rent.toLocaleString('en-GB');
+  g('v-void').textContent    = voidMo === 0 ? 'None' : voidMo === 1 ? '1 month' : voidMo + ' months';
+  g('v-scost').textContent   = (+g('s-scost').value).toFixed(1) + '%';
+  g('v-agent').textContent   = g('s-agent').value + '%';
+  g('v-repairs').textContent = '£' + rep.toLocaleString('en-GB');
+  g('v-upfront').textContent = '£' + up.toLocaleString('en-GB');
+  g('v-tax').textContent     = g('s-tax').value + '%';
+  g('v-hpg').textContent     = (+g('s-hpg').value).toFixed(1) + '%';
+  g('v-inv').textContent     = (+g('s-inv').value).toFixed(1) + '%';
+  g('v-rinc').textContent    = (+g('s-rinc').value).toFixed(1) + '%';
 
+  // Monthly mortgage payment
   const r = mr / 12;
   const n = my * 12;
   const mp = r > 0 ? mb0 * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : mb0 / n;
+
   const netP = sale - mb0 - sale * sc;
 
   const labels = ['Now'];
-  const sellD = [Math.round(netP)];
-  const keepD = [Math.round(Math.max(0, sale - mb0) - up)];
+  const sellD  = [Math.round(netP)];
+  const keepD  = [Math.round(Math.max(0, sale - mb0) - up)];
 
+  // Track sell scenario: proceeds grow at investment rate
+  // Track keep scenario: equity + cumulative cashflow (surpluses invested, deficits are a cost)
   let sw = netP, kc = -up, mb = mb0, pv = sale;
-  let yr1tax = 0, yr1nc = 0;
+  let yr1tax = 0, yr1nc = 0, yr1grossAnnual = 0, yr1totalOut = 0;
   let final_pv = sale, final_mb = mb0, final_equity = 0, final_kc = -up;
 
   for (let y = 1; y <= 10; y++) {
+    // Sell scenario: invested proceeds compound
     sw *= (1 + inv);
-    const gr = rent * 12 * Math.pow(1 + ri, y - 1);
+
+    // Void-adjusted annual rent received (mortgage still paid all 12 months)
+    const occupiedMonths = 12 - voidMo;
+    const gr = rent * occupiedMonths * Math.pow(1 + ri, y - 1);
+
+    // Agent fees only on rent received
     const agf = gr * af;
+
+    // Calculate annual mortgage interest (for Section 24 credit)
     let ai = 0, tb = mb;
     if (tb > 0) {
       for (let m = 0; m < 12; m++) {
@@ -509,27 +463,62 @@ function calc() {
         tb = Math.max(0, tb - principal);
       }
     }
-    const amp = (mb - tb) + ai;
+    // Full annual mortgage cash outflow (mortgage runs all 12 months regardless of voids)
+    const annualMortgageCash = mp * 12;
+
+    // Section 24: taxable on (rent - agent - repairs), 20% credit on interest
     const taxableProfit = Math.max(0, gr - agf - rep);
     const tax = Math.max(0, taxableProfit * tr - ai * 0.20);
-    const nc = gr - amp - agf - rep - tax;
-    kc += nc;
+
+    // Net cashflow: rent in minus everything paid out
+    const nc = gr - annualMortgageCash - agf - rep - tax;
+
+    // Surpluses compound at investment rate; deficits reduce wealth directly
+    if (kc + nc > 0) {
+      kc = (kc > 0 ? kc * (1 + inv) : kc) + nc;
+    } else {
+      kc += nc;
+    }
+
     mb = tb;
     pv *= (1 + hpg);
-    if (y === 1) { yr1tax = tax; yr1nc = nc; }
+
+    if (y === 1) {
+      yr1tax          = tax;
+      yr1nc           = nc;
+      yr1grossAnnual  = gr;
+      yr1totalOut     = annualMortgageCash + agf + rep + tax;
+    }
+
     const equity = Math.max(0, pv - mb);
     if (y === 10) { final_pv = pv; final_mb = mb; final_equity = equity; final_kc = kc; }
+
     labels.push('Yr ' + y);
     sellD.push(Math.round(sw));
     keepD.push(Math.round(equity + kc));
   }
 
+  // ---- Cashflow banner ----
+  const cfRentMo = Math.round(yr1grossAnnual / 12);
+  const cfOutMo  = Math.round(yr1totalOut / 12);
+  const cfNetMo  = Math.round(yr1nc / 12);
+  const surplus  = cfNetMo >= 0;
+
+  g('cf-rent').textContent    = fmtF(cfRentMo);
+  g('cf-rent-sub').textContent = voidMo > 0 ? `after ${voidMo} month${voidMo===1?'':'s'} void/yr` : 'no void assumed';
+  g('cf-out').textContent     = fmtF(cfOutMo);
+  g('cf-net').textContent     = fmtF(cfNetMo);
+  g('cf-net').className       = 'cf-val ' + (surplus ? 'pos' : 'neg');
+  g('cf-net-sub').textContent = surplus ? 'surplus — reinvested' : 'shortfall — funded from income';
+
+  g('cf-pill').innerHTML = surplus
+    ? `<div class="cf-pill pos">Cashflow positive — ${fmtF(cfNetMo)}/mo surplus reinvested into savings over 10 years</div>`
+    : `<div class="cf-pill neg">Cashflow negative — ${fmtF(Math.abs(cfNetMo))}/mo shortfall must be funded from other income (already deducted from totals)</div>`;
+
+  // ---- Metric cards ----
   g('m-mortgage').textContent = fmtF(mp);
-  const mnc = Math.round(yr1nc / 12);
-  g('m-netcash').textContent = fmtF(mnc);
-  g('m-netcash').className = 'metric-value' + (mnc < 0 ? ' warn' : '');
   g('m-proceeds').textContent = fmtF(netP);
-  g('m-tax').textContent = fmtF(yr1tax);
+  g('m-tax').textContent      = fmtF(yr1tax);
 
   const abar = g('afford-bar');
   if (netP < 0) {
@@ -537,8 +526,9 @@ function calc() {
     abar.textContent = 'Note: mortgage balance exceeds sale price — selling would require extra funds to clear the mortgage.';
   } else { abar.style.display = 'none'; }
 
+  // ---- Result cards ----
   const s10 = sellD[10], k10 = keepD[10];
-  const win = s10 >= k10 ? 'sell' : 'keep';
+  const win  = s10 >= k10 ? 'sell' : 'keep';
   const diff = Math.abs(s10 - k10);
 
   g('r-sell').textContent = fmtF(s10);
@@ -550,11 +540,12 @@ function calc() {
 
   g('kd-propval').textContent = fmtF(final_pv);
   g('kd-mortbal').textContent = final_mb > 0 ? fmtF(final_mb) : '£0 (paid off)';
-  g('kd-equity').textContent = fmtF(final_equity);
-  g('kd-cash').textContent = fmtF(final_kc);
-  g('kd-cash').className = 'kb-value' + (final_kc < 0 ? ' warn' : '');
+  g('kd-equity').textContent  = fmtF(final_equity);
+  g('kd-cash').textContent    = fmtF(final_kc);
+  g('kd-cash').className      = 'kb-value ' + (final_kc < 0 ? 'neg' : 'pos');
 
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  // ---- Chart ----
+  const isDark    = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const sellColor = isDark ? '#5b8ef5' : '#1a4fd6';
   const keepColor = isDark ? '#5ab868' : '#2d7d3a';
   const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
@@ -572,12 +563,11 @@ function calc() {
         labels,
         datasets: [
           { label: 'Sell & invest', data: sellD, borderColor: sellColor, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: sellColor, tension: 0.25, fill: false },
-          { label: 'Keep & rent', data: keepD, borderColor: keepColor, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: keepColor, tension: 0.25, fill: false }
+          { label: 'Keep & rent',   data: keepD, borderColor: keepColor, borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: keepColor, tension: 0.25, fill: false }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtF(ctx.raw) } }
@@ -591,7 +581,7 @@ function calc() {
   }
 }
 
-const ids = ['s-sale','s-mort','s-mrate','s-myrs','s-rent','s-scost','s-agent','s-repairs','s-upfront','s-tax','s-hpg','s-inv','s-rinc'];
+const ids = ['s-sale','s-mort','s-mrate','s-myrs','s-rent','s-void','s-scost','s-agent','s-repairs','s-upfront','s-tax','s-hpg','s-inv','s-rinc'];
 ids.forEach(id => g(id).addEventListener('input', calc));
 calc();
 </script>
